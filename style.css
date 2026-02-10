@@ -1,7 +1,7 @@
  
         /* --- CSS VARIABLES & RESET --- */
         :root {
-            --primary: #0f172a;       /* Navy Blue */
+            --primary: #104068;       /* Navy Blue */
             --accent: #f97316;        /* Orange */
             --light: #f8fafc;         
             --dark: #1e293b;          
@@ -215,4 +215,4 @@
             .mission-container { flex-direction: column; text-align: center; }
             .mission-content { text-align: center; }
         }
-    
+     
