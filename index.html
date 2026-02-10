@@ -24,6 +24,7 @@
                 <li><a href="#services">Services</a></li>
                 <li><a href="#clients">Clients</a></li>
                 <li><a href="#contact">Contact</a></li>
+                <a  href="admin.html"> <div class="icon"><i id="adminIcon" class="fas fa-user-shield" ></i></div>  </a>
             </ul>
             <div class="hamburger">☰</div>
         </nav>
@@ -145,6 +146,38 @@
             </div>
         </div>
     </section>
+
+
+     <section id="reviews">
+        <div class="section-header" data-aos="fade-up">
+            <h2>Client <span style="background: #104068;   -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Feedback</span></h2>
+        </div>
+
+        <div class="review-slider-container" data-aos="fade-up">
+            <div class="review-track" id="reviewTrack">
+                </div>
+        </div>
+
+        <div class="review-controls">
+            <button class="review-nav-btn" onclick="prevReview()"><i class="fas fa-arrow-left"></i></button>
+            <button class="review-nav-btn" onclick="nextReview()"><i class="fas fa-arrow-right"></i></button>
+        </div>
+
+        <button class="review-add-btn" onclick="toggleReviewModal()">+ Add Your Review</button>
+    </section>
+
+    <div class="review-modal" id="reviewModal">
+        <div class="review-form-box">
+            <h3 style="color:white; margin-bottom:20px; text-align:center;">Share Your Experience</h3>
+            <form id="publicReviewForm">
+                <input type="text" id="r-name" placeholder="Your Name" required>
+                <input type="text" id="r-role" placeholder="Your Role (e.g. Manager)" required>
+                <textarea id="r-msg" rows="4" placeholder="Write your review here..." required></textarea>
+                <button type="submit" class="review-add-btn" style="width:100%; margin-top:0;">Submit for Approval</button>
+                <button type="button" class="review-add-btn" style="background:#f33939; margin-top:10px; width:100%;" onclick="toggleReviewModal()">Close</button>
+            </form>
+        </div>
+    </div>
 
     <footer>
         <div class="footer-content">
