@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- BRAND VARIABLES (MATCHING YOUR WEBSITE) --- */
+        /* --- BRAND VARIABLES --- */
         :root {
             --primary: #104068;       /* Navy Blue */
             --accent: #f97316;        /* Orange */
-            --light: #f8fafc;         /* Light Background */
-            --dark: #1e293b;          /* Dark Text */
+            --light: #f8fafc;         
+            --dark: #1e293b;          
             --success: #22c55e;
             --danger: #ef4444;
         }
@@ -30,7 +30,7 @@
             align-items: center;
         }
 
-        /* --- HEADER (MATCHING MAIN SITE) --- */
+        /* --- HEADER --- */
         header {
             background: white;
             width: 100%;
@@ -50,7 +50,6 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            letter-spacing: 0.5px;
         }
 
         .logout-btn {
@@ -62,11 +61,10 @@
             font-weight: 600;
             cursor: pointer;
             transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(16, 64, 104, 0.2);
         }
-        .logout-btn:hover { background: var(--accent); transform: translateY(-2px); }
+        .logout-btn:hover { background: var(--accent); }
 
-        /* --- DASHBOARD CONTAINER --- */
+        /* --- CONTAINER --- */
         .container {
             width: 100%;
             max-width: 900px;
@@ -74,101 +72,104 @@
             padding: 0 20px;
         }
 
-        .page-title {
+        .section-title {
             color: var(--primary);
-            margin-bottom: 30px;
-            font-size: 2rem;
+            margin: 40px 0 20px;
+            font-size: 1.8rem;
             border-left: 6px solid var(--accent);
-            padding-left: 20px;
+            padding-left: 15px;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        /* --- REVIEW CARDS (MATCHING SITE STYLE) --- */
+        /* --- REVIEW CARDS --- */
         .card-list { display: flex; flex-direction: column; gap: 20px; }
 
         .review-card {
             background: white;
             padding: 25px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border-left: 5px solid var(--accent);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid #ccc; /* Default gray border */
             transition: 0.3s;
-            position: relative;
-            overflow: hidden;
         }
         
-        .review-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+        /* Pending uses Orange Border */
+        .card-pending { border-left-color: var(--accent); }
+        /* Active uses Green Border */
+        .card-active { border-left-color: var(--success); }
 
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        
         .user-info h4 { color: var(--primary); font-size: 1.2rem; margin-bottom: 4px; }
         .user-info span { color: #64748b; font-size: 0.9rem; font-weight: 600; }
         
         .status-badge {
-            background: #fff7ed; color: var(--accent); 
             padding: 5px 12px; border-radius: 20px; 
             font-size: 0.75rem; font-weight: bold; 
-            border: 1px solid var(--accent);
             text-transform: uppercase; letter-spacing: 1px;
         }
+        .badge-pending { background: #fff7ed; color: var(--accent); border: 1px solid var(--accent); }
+        .badge-active { background: #f0fdf4; color: var(--success); border: 1px solid var(--success); }
 
         .review-text { 
             font-style: italic; color: #334155; line-height: 1.6; 
             background: #f8fafc; padding: 15px; border-radius: 8px;
-            border-left: 2px solid #cbd5e1;
         }
 
-        /* --- ACTION BUTTONS --- */
+        /* --- BUTTONS --- */
         .actions { display: flex; gap: 15px; margin-top: 20px; }
         .btn {
             flex: 1; padding: 12px; border: none; border-radius: 8px; cursor: pointer;
             font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: 0.2s; font-size: 1rem;
+            transition: 0.2s;
         }
-        
         .btn-approve { background: var(--success); color: white; }
-        .btn-approve:hover { background: #16a34a; box-shadow: 0 5px 15px rgba(34, 197, 94, 0.3); }
+        .btn-approve:hover { background: #16a34a; }
         
         .btn-reject { background: #fee2e2; color: var(--danger); }
         .btn-reject:hover { background: var(--danger); color: white; }
 
-        .empty-msg { text-align: center; color: #94a3b8; padding: 40px; font-size: 1.1rem; }
+        .btn-delete-live { background: #ef4444; color: white; width: 100%; margin-top: 15px; }
+        .btn-delete-live:hover { background: #dc2626; }
 
-        /* --- LOGIN SCREEN (OVERLAY) --- */
+        .empty-msg { text-align: center; color: #94a3b8; padding: 20px; font-style: italic; }
+
+        /* --- LOGIN SCREEN (WITH SHOW PASSWORD ICON) --- */
         #login-screen {
             position: fixed; inset: 0;
             background: linear-gradient(135deg, var(--primary), #0f172a);
             z-index: 2000;
             display: flex; justify-content: center; align-items: center;
         }
-
         .login-box {
             background: white; padding: 40px; border-radius: 20px; width: 90%; max-width: 400px;
             text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
-
-        .login-logo { font-size: 3rem; color: var(--accent); margin-bottom: 1rem; }
-        .login-box h3 { color: var(--primary); margin-bottom: 20px; font-weight: 800; }
-
-        .password-wrapper { position: relative; width: 100%; margin-bottom: 20px; }
+        
+        .password-wrapper { position: relative; width: 100%; margin: 20px 0; }
+        
         .password-wrapper input { 
-            width: 100%; padding: 15px; padding-right: 45px;
-            border: 2px solid #e2e8f0; border-radius: 10px; 
-            outline: none; transition: 0.3s;
+            width: 100%; padding: 15px; padding-right: 45px; /* Space for icon */
+            border: 2px solid #e2e8f0; border-radius: 10px; outline: none;
+            font-size: 1rem;
         }
-        .password-wrapper input:focus { border-color: var(--accent); }
+        
+        /* The Eye Icon */
         .password-wrapper i {
             position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
-            cursor: pointer; color: #94a3b8;
+            cursor: pointer; color: #94a3b8; font-size: 1.2rem;
+            transition: color 0.3s;
         }
         .password-wrapper i:hover { color: var(--primary); }
 
         .btn-login {
             width: 100%; padding: 15px; background: var(--accent); color: white;
             border: none; border-radius: 10px; font-weight: bold; cursor: pointer;
-            font-size: 1.1rem; transition: 0.3s;
+            font-size: 1.1rem;
         }
-        .btn-login:hover { background: #ea580c; transform: translateY(-2px); }
+        .btn-login:hover { background: #ea580c; }
 
     </style>
 </head>
@@ -176,146 +177,164 @@
 
     <div id="login-screen">
         <div class="login-box">
-            <div class="login-logo"><i class="fas fa-shield-alt"></i></div>
-            <h3>Admin Portal</h3>
-            
+            <h2 style="color:var(--primary); margin-bottom:10px;">Admin Portal</h2>
             <div class="password-wrapper">
                 <input type="password" id="admin-pass" placeholder="Enter Access Code">
                 <i class="fas fa-eye" id="togglePassword" onclick="togglePass()"></i>
             </div>
-
             <button class="btn-login" onclick="checkLogin()">Access Dashboard</button>
         </div>
     </div>
 
     <header>
-        <div class="brand">
-            <i class="fas fa-truck-fast"></i> Tridev Logistics Admin
-        </div>
-        <button class="logout-btn" onclick="location.reload()">Logout <i class="fas fa-sign-out-alt"></i></button>
+        <div class="brand"><i class="fas fa-truck-fast"></i> Tridev Logistics Admin</div>
+        <button class="logout-btn" onclick="location.reload()">Logout</button>
     </header>
 
     <div class="container">
-        <h2 class="page-title">Pending Reviews</h2>
+        
+        <h2 class="section-title"><i class="fas fa-clock"></i> Pending Approvals</h2>
         <div id="pending-list" class="card-list">
-            <div class="empty-msg"><i class="fas fa-spinner fa-spin"></i> Connecting to Secure Database...</div>
+            <div class="empty-msg">Loading pending reviews...</div>
         </div>
+
+        <h2 class="section-title" style="margin-top: 60px; border-left-color: var(--success);">
+            <i class="fas fa-check-circle" style="color:var(--success)"></i> Live on Website
+        </h2>
+        <div id="active-list" class="card-list">
+            <div class="empty-msg">Loading live reviews...</div>
+        </div>
+
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-        // --- PASTE YOUR FIREBASE CONFIG HERE ---
-         const firebaseConfig = {
-    apiKey: "AIzaSyA0V3z0ujx3WjpLygMAKEqZKlAUbdsAKZ0",
-    authDomain: "tridev-logistics.firebaseapp.com",
-    projectId: "tridev-logistics",
-    storageBucket: "tridev-logistics.firebasestorage.app",
-    messagingSenderId: "1072370972061",
-    appId: "1:1072370972061:web:e8d70223559178e7a32b74",
-    measurementId: "G-H4MMTWX8EH"
-  };
+        // --- FIREBASE KEYS ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyA0V3z0ujx3WjpLygMAKEqZKlAUbdsAKZ0",
+            authDomain: "tridev-logistics.firebaseapp.com",
+            projectId: "tridev-logistics",
+            storageBucket: "tridev-logistics.firebasestorage.app",
+            messagingSenderId: "1072370972061",
+            appId: "1:1072370972061:web:e8d70223559178e7a32b74",
+            measurementId: "G-H4MMTWX8EH"
+        };
 
-        // Initialize Firebase
-        let app, db;
-        try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-        } catch (e) {
-            console.error("Firebase Key Missing", e);
-        }
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
         // --- LOGIN LOGIC ---
         window.checkLogin = () => {
             const pass = document.getElementById('admin-pass').value;
-            if(pass === "admin123") { // <--- CHANGE PASSWORD HERE
-                document.getElementById('login-screen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('login-screen').style.display = 'none';
-                }, 300);
-                loadReviews();
+            if(pass === "admin123") { // <--- CHANGE PASSWORD HERE IF NEEDED
+                document.getElementById('login-screen').style.display = 'none';
+                loadPendingReviews();
+                loadActiveReviews();
             } else {
-                alert("Access Denied: Incorrect Password");
+                alert("Incorrect Password");
             }
         };
 
-        // Toggle Password Visibility
+        // --- TOGGLE PASSWORD FUNCTION ---
         window.togglePass = () => {
-            const passInput = document.getElementById('admin-pass');
+            const input = document.getElementById('admin-pass');
             const icon = document.getElementById('togglePassword');
             
-            if (passInput.type === "password") {
-                passInput.type = "text";
+            if (input.type === "password") {
+                input.type = "text"; // Show password
                 icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
+                icon.classList.add('fa-eye-slash'); // Change icon to crossed eye
             } else {
-                passInput.type = "password";
+                input.type = "password"; // Hide password
                 icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+                icon.classList.add('fa-eye'); // Change icon back
             }
         };
 
-        // Load Pending Reviews
-        async function loadReviews() {
+        // --- LOAD PENDING REVIEWS ---
+        async function loadPendingReviews() {
             const list = document.getElementById('pending-list');
-            list.innerHTML = "<div class='empty-msg'>Checking for new reviews...</div>";
+            list.innerHTML = "";
 
-            try {
-                const q = query(collection(db, "reviews"), where("status", "==", "pending"));
-                const querySnapshot = await getDocs(q);
+            const q = query(collection(db, "reviews"), where("status", "==", "pending"));
+            const querySnapshot = await getDocs(q);
 
-                if (querySnapshot.empty) {
-                    list.innerHTML = "<div class='empty-msg'>No pending reviews at this time.</div>";
-                    return;
-                }
-
-                list.innerHTML = ""; // Clear loading message
-
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const div = document.createElement('div');
-                    div.className = 'review-card';
-                    div.innerHTML = `
-                        <div class="card-header">
-                            <div class="user-info">
-                                <h4>${data.name}</h4>
-                                <span>${data.role}</span>
-                            </div>
-                            <span class="status-badge">Pending Approval</span>
-                        </div>
-                        <p class="review-text">"${data.text}"</p>
-                        <div class="actions">
-                            <button class="btn btn-approve" id="app-${docSnap.id}">
-                                <i class="fas fa-check"></i> Approve
-                            </button>
-                            <button class="btn btn-reject" id="rej-${docSnap.id}">
-                                <i class="fas fa-trash"></i> Reject
-                            </button>
-                        </div>
-                    `;
-                    list.appendChild(div);
-
-                    // Add Listeners
-                    document.getElementById(`app-${docSnap.id}`).addEventListener('click', () => approveReview(docSnap.id));
-                    document.getElementById(`rej-${docSnap.id}`).addEventListener('click', () => rejectReview(docSnap.id));
-                });
-            } catch (error) {
-                console.error("Error:", error);
-                list.innerHTML = "<div class='empty-msg' style='color:red'>Error loading data. Check console.</div>";
+            if (querySnapshot.empty) {
+                list.innerHTML = "<div class='empty-msg'>No new reviews waiting for approval.</div>";
+                return;
             }
+
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const div = document.createElement('div');
+                div.className = 'review-card card-pending';
+                div.innerHTML = `
+                    <div class="card-header">
+                        <div class="user-info"><h4>${data.name}</h4><span>${data.role}</span></div>
+                        <span class="status-badge badge-pending">Pending</span>
+                    </div>
+                    <p class="review-text">"${data.text}"</p>
+                    <div class="actions">
+                        <button class="btn btn-approve" id="app-${docSnap.id}"><i class="fas fa-check"></i> Approve</button>
+                        <button class="btn btn-reject" id="rej-${docSnap.id}"><i class="fas fa-trash"></i> Reject</button>
+                    </div>
+                `;
+                list.appendChild(div);
+                document.getElementById(`app-${docSnap.id}`).addEventListener('click', () => approveReview(docSnap.id));
+                document.getElementById(`rej-${docSnap.id}`).addEventListener('click', () => deleteReview(docSnap.id, "pending"));
+            });
         }
 
+        // --- LOAD ACTIVE (LIVE) REVIEWS ---
+        async function loadActiveReviews() {
+            const list = document.getElementById('active-list');
+            list.innerHTML = "";
+
+            const q = query(collection(db, "reviews"), where("status", "==", "active"));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                list.innerHTML = "<div class='empty-msg'>No reviews are currently live.</div>";
+                return;
+            }
+
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const div = document.createElement('div');
+                div.className = 'review-card card-active';
+                div.innerHTML = `
+                    <div class="card-header">
+                        <div class="user-info"><h4>${data.name}</h4><span>${data.role}</span></div>
+                        <span class="status-badge badge-active">Live</span>
+                    </div>
+                    <p class="review-text">"${data.text}"</p>
+                    <button class="btn btn-delete-live" id="del-${docSnap.id}"><i class="fas fa-trash"></i> Delete from Website</button>
+                `;
+                list.appendChild(div);
+                document.getElementById(`del-${docSnap.id}`).addEventListener('click', () => deleteReview(docSnap.id, "active"));
+            });
+        }
+
+        // --- ACTIONS ---
         async function approveReview(id) {
             if(!confirm("Approve this review for the live website?")) return;
             await updateDoc(doc(db, "reviews", id), { status: "active" });
-            loadReviews(); 
+            loadPendingReviews();
+            loadActiveReviews();
         }
 
-        async function rejectReview(id) {
-            if(!confirm("Are you sure you want to delete this review?")) return;
+        async function deleteReview(id, type) {
+            const msg = type === "active" 
+                ? "Are you sure? This will remove the review from the website immediately." 
+                : "Reject and delete this request?";
+                
+            if(!confirm(msg)) return;
+            
             await deleteDoc(doc(db, "reviews", id));
-            loadReviews();
+            loadPendingReviews();
+            loadActiveReviews();
         }
     </script>
 </body>

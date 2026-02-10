@@ -187,17 +187,34 @@ if (hamburger) {
     hamburger.addEventListener('click', () => { navLinks.classList.toggle('active'); });
 }
 
-// 3D Logo Script
+// --- FIXED 3D LOGO SCRIPT (Proper Tilt Logic) ---
 const logoContainer = document.getElementById('logo3d');
 if (logoContainer) {
     const logoImg = logoContainer.querySelector('.logo-img');
-    document.addEventListener('mousemove', (e) => {
-        let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-        let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
-        // Limit rotation
-        if (xAxis > 20) xAxis = 20; if (xAxis < -20) xAxis = -20;
-        if (yAxis > 20) yAxis = 20; if (yAxis < -20) yAxis = -20;
-        logoImg.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+
+    // 1. Mouse Move: Calculate Local Coordinates
+    logoContainer.addEventListener('mousemove', (e) => {
+        const rect = logoContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left; // Mouse X inside container
+        const y = e.clientY - rect.top;  // Mouse Y inside container
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        // 2. Calculate Rotation (Max 25 degrees)
+        // Invert X calculation for "Tilt" effect
+        const rotateY = ((x - centerX) / centerX) * 25; 
+        const rotateX = ((centerY - y) / centerY) * 25;
+
+        // 3. Apply Transform
+        logoImg.style.transition = 'transform 0.1s ease-out'; // Fast response
+        logoImg.style.transform = `perspective(500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.1)`;
+    });
+
+    // 4. Reset on Mouse Leave
+    logoContainer.addEventListener('mouseleave', () => {
+        logoImg.style.transition = 'transform 0.5s ease'; // Smooth reset
+        logoImg.style.transform = `perspective(500px) rotateX(0deg) rotateY(0deg) scale(1)`;
     });
 }
 
