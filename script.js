@@ -1,66 +1,190 @@
 /* =========================================
-   1. EXISTING WEBSITE LOGIC
+   1. IMPORTS & FIREBASE SETUP
+   (Must be at the top of the file)
+   ========================================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+// --- YOUR FIREBASE KEYS ---
+const firebaseConfig = {
+    apiKey: "AIzaSyA0V3z0ujx3WjpLygMAKEqZKlAUbdsAKZ0",
+    authDomain: "tridev-logistics.firebaseapp.com",
+    projectId: "tridev-logistics",
+    storageBucket: "tridev-logistics.firebasestorage.app",
+    messagingSenderId: "1072370972061",
+    appId: "1:1072370972061:web:e8d70223559178e7a32b74",
+    measurementId: "G-H4MMTWX8EH"
+};
+
+// Initialize App
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+/* =========================================
+   2. GLOBAL FUNCTIONS (For HTML onclick="")
    ========================================= */
 
-// Initialize Animations
-AOS.init({ once: true, offset: 100 });
+// Toggle the Review Popup
+window.toggleReviewModal = function() {
+    const modal = document.getElementById('reviewModal');
+    if (modal) {
+        modal.classList.toggle('active');
+    } else {
+        console.error("Modal not found!");
+    }
+};
+
+// Review Slider Logic
+let activeReviews = [];
+let currentRevIndex = 0;
+const reviewTrack = document.getElementById('reviewTrack');
+
+window.nextReview = function() {
+    if (activeReviews.length > 0) {
+        currentRevIndex = (currentRevIndex + 1) % activeReviews.length;
+        updateReviewSlide();
+    }
+};
+
+window.prevReview = function() {
+    if (activeReviews.length > 0) {
+        currentRevIndex = (currentRevIndex - 1 + activeReviews.length) % activeReviews.length;
+        updateReviewSlide();
+    }
+};
+
+function updateReviewSlide() {
+    if (reviewTrack) {
+        const cardWidth = 320 + 50; // Card width (320px) + Gap (50px)
+        reviewTrack.style.transform = `translateX(-${currentRevIndex * cardWidth}px)`;
+    }
+}
+
+
+/* =========================================
+   3. FIREBASE LOGIC (Load & Add Reviews)
+   ========================================= */
+
+// A. LOAD APPROVED REVIEWS
+async function loadReviews() {
+    if (!reviewTrack) return;
+    
+    reviewTrack.innerHTML = "<p style='text-align:center; width:100%; color:gray;'>Loading reviews...</p>";
+
+    try {
+        // Query: Get reviews where status is 'active'
+        const q = query(collection(db, "reviews"), where("status", "==", "active"));
+        const querySnapshot = await getDocs(q);
+        
+        reviewTrack.innerHTML = ""; // Clear loading msg
+        activeReviews = []; // Reset array
+
+        if (querySnapshot.empty) {
+            reviewTrack.innerHTML = "<p style='text-align:center; width:100%; color:#666;'>No reviews yet. Be the first!</p>";
+            return;
+        }
+
+        // Store data and render
+        querySnapshot.forEach((doc) => activeReviews.push(doc.data()));
+
+        activeReviews.forEach(data => {
+            const card = document.createElement('div');
+            card.className = 'review-card';
+            card.innerHTML = `
+                <div class="review-card-inner">
+                    <div class="review-quote"><i class="fas fa-quote-right"></i></div>
+                    <p class="review-body">"${data.text}"</p>
+                    <div class="review-user">
+                        <img src="https://ui-avatars.com/api/?name=${data.name}&background=random" alt="User">
+                        <div class="user-info">
+                            <h4>${data.name}</h4>
+                            <span>${data.role}</span>
+                        </div>
+                    </div>
+                </div>`;
+            reviewTrack.appendChild(card);
+        });
+        
+        // Reset slider position
+        currentRevIndex = 0;
+        updateReviewSlide();
+
+    } catch (error) {
+        console.error("Error loading reviews:", error);
+        reviewTrack.innerHTML = "<p style='color:red; text-align:center;'>Error loading reviews.</p>";
+    }
+}
+
+// B. SUBMIT NEW REVIEW
+const pubRevForm = document.getElementById('publicReviewForm');
+if (pubRevForm) {
+    pubRevForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = pubRevForm.querySelector('button[type="submit"]');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "Sending...";
+        btn.disabled = true;
+
+        try {
+            await addDoc(collection(db, "reviews"), {
+                name: document.getElementById('r-name').value,
+                role: document.getElementById('r-role').value,
+                text: document.getElementById('r-msg').value,
+                status: "pending", // Sends to Admin
+                date: new Date()
+            });
+
+            alert("Thank you! Your review has been submitted for approval.");
+            window.toggleReviewModal(); // Close modal
+            pubRevForm.reset();
+        } catch (error) {
+            console.error("Error adding review: ", error);
+            alert("Error submitting review. Check console for details.");
+        }
+        
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    });
+}
+
+// Load reviews when page opens
+document.addEventListener('DOMContentLoaded', loadReviews);
+
+
+/* =========================================
+   4. ANIMATIONS & OTHER LOGIC
+   ========================================= */
+
+// Initialize AOS
+if (typeof AOS !== 'undefined') {
+    AOS.init({ once: true, offset: 100 });
+}
 
 // 3D Globe Background
-VANTA.GLOBE({
-    el: "#home",
-    mouseControls: true,
-    touchControls: true,
-    gyroControls: false,
-    minHeight: 200.00,
-    minWidth: 200.00,
-    scale: 1.00,
-    scaleMobile: 1.00,
-    color: 0xf97316,
-    backgroundColor: 0x0f172a,
-    size: 1.20
-});
+if (typeof VANTA !== 'undefined') {
+    try {
+        VANTA.GLOBE({
+            el: "#home",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0xf97316,
+            backgroundColor: 0x0f172a,
+            size: 1.20
+        });
+    } catch (e) { console.log("Vanta not loaded"); }
+}
 
 // Hamburger Menu
 const hamburger = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.nav-links');
 if (hamburger) {
     hamburger.addEventListener('click', () => { navLinks.classList.toggle('active'); });
-}
-
-// Contact Form Logic (Google Sheets)
-const scriptURL = 'https://script.google.com/macros/s/AKfycbxN97WkMrWH0OoegFZAWxKysONuLlk7KiVYh2vLONsfZq71U3JiCeMoiWc8BY0cTY-f/exec';
-const form = document.forms['contact-form'];
-
-if (form) {
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        let isValid = true;
-        const inputs = form.querySelectorAll('input, textarea');
-        inputs.forEach(input => {
-            if (!input.value) { input.style.borderColor = 'red'; isValid = false; }
-            else { input.style.borderColor = '#e2e8f0'; }
-        });
-
-        if (isValid) {
-            const btn = form.querySelector('.form-btn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Sending...';
-
-            const now = new Date();
-            const formData = new FormData(form);
-            formData.append('Date', now.toLocaleDateString());
-            formData.append('Time', now.toLocaleTimeString());
-
-            fetch(scriptURL, { method: 'POST', body: formData })
-                .then(response => {
-                    btn.innerHTML = 'Success!';
-                    btn.style.background = '#25D366';
-                    form.reset();
-                    setTimeout(() => { btn.innerHTML = originalText; btn.style.background = 'var(--primary)'; }, 3000);
-                })
-                .catch(error => { alert('Error! Check Script URL.'); btn.innerHTML = originalText; });
-        }
-    });
 }
 
 // 3D Logo Script
@@ -70,162 +194,36 @@ if (logoContainer) {
     document.addEventListener('mousemove', (e) => {
         let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
         let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+        // Limit rotation
         if (xAxis > 20) xAxis = 20; if (xAxis < -20) xAxis = -20;
         if (yAxis > 20) yAxis = 20; if (yAxis < -20) yAxis = -20;
         logoImg.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
     });
 }
 
-// Newsletter Logic
-const newsBtn = document.getElementById('newsletter-btn');
-const newsInput = document.getElementById('newsletter-email');
-const newsMsg = document.getElementById('newsletter-msg');
+// Contact Form (Google Sheets)
+const scriptURL = 'https://script.google.com/macros/s/AKfycbxN97WkMrWH0OoegFZAWxKysONuLlk7KiVYh2vLONsfZq71U3JiCeMoiWc8BY0cTY-f/exec';
+const contactForm = document.forms['contact-form'];
 
-if (newsBtn) {
-    newsBtn.addEventListener('click', () => {
-        const email = newsInput.value;
-        if (!email || !email.includes('@')) {
-            newsMsg.style.color = '#ef4444'; newsMsg.innerText = "Invalid email."; return;
-        }
-        const originalIcon = newsBtn.innerHTML;
-        newsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        const now = new Date();
-        const data = new FormData();
-        data.append('Name', 'Newsletter Subscriber');
-        data.append('Email', email);
-        data.append('Message', 'Subscribed from Footer');
-        data.append('Date', now.toLocaleDateString());
-        data.append('Time', now.toLocaleTimeString());
-
-        fetch(scriptURL, { method: 'POST', body: data })
-            .then(() => {
-                newsBtn.innerHTML = '<i class="fas fa-check"></i>';
-                newsBtn.style.background = '#25D366';
-                newsMsg.style.color = '#25D366'; newsMsg.innerText = "Subscribed!";
-                newsInput.value = "";
-                setTimeout(() => { newsBtn.innerHTML = originalIcon; newsBtn.style.background = 'var(--accent)'; newsMsg.innerText = ""; }, 3000);
-            })
-            .catch(() => { newsMsg.innerText = "Error."; newsBtn.innerHTML = originalIcon; });
-    });
-}
-
-
-/* =========================================
-   2. NEW: REVIEW SYSTEM LOGIC
-   ========================================= */
-
-// Default Data (Fallback if LocalStorage is empty)
-const defaultReviews = [
-    { id: 1, name: "Alex Johnson", role: "Logistics Mgr", text: "The colorful design and smooth tracking animation blew me away. Best service ever!" },
-    { id: 2, name: "Sarah Smith", role: "CEO, TechFlow", text: "Incredible attention to detail. The dashboard is intuitive and the delivery was fast." },
-    { id: 3, name: "Mike Tyson", role: "Heavy Freight", text: "Robust and reliable. They handled our heavy machinery with extreme care." }
-];
-
-// Load Data from LocalStorage (Shared with Admin Panel)
-// We use 'activeReviews' for display and 'pendingReviews' for submission
-let activeReviews = JSON.parse(localStorage.getItem('activeReviews')) || defaultReviews;
-let pendingReviews = JSON.parse(localStorage.getItem('pendingReviews')) || [];
-
-const reviewTrack = document.getElementById('reviewTrack');
-let currentRevIndex = 0;
-
-// --- RENDER FUNCTION ---
-function renderReviews() {
-    if (!reviewTrack) return; // Guard clause in case element is missing
-    reviewTrack.innerHTML = "";
-    
-    activeReviews.forEach(data => {
-        const card = document.createElement('div');
-        card.className = 'review-card';
-        card.innerHTML = `
-            <div class="review-card-inner">
-                <div class="review-quote"><i class="fas fa-quote-right"></i></div>
-                <p class="review-body">"${data.text}"</p>
-                <div style="color: gold; margin-bottom: 10px;">⭐⭐⭐⭐⭐</div>
-                <div class="review-user">
-                    <img src="https://ui-avatars.com/api/?name=${data.name}&background=random" alt="User">
-                    <div class="user-info">
-                        <h4>${data.name}</h4>
-                        <span>${data.role}</span>
-                    </div>
-                </div>
-            </div>
-        `;
-        reviewTrack.appendChild(card);
-    });
-    updateReviewSlide();
-}
-
-// --- SLIDER CONTROLS ---
-function nextReview() {
-    if (activeReviews.length > 0) {
-        currentRevIndex = (currentRevIndex + 1) % activeReviews.length;
-        updateReviewSlide();
-    }
-}
-
-function prevReview() {
-    if (activeReviews.length > 0) {
-        currentRevIndex = (currentRevIndex - 1 + activeReviews.length) % activeReviews.length;
-        updateReviewSlide();
-    }
-}
-
-function updateReviewSlide() {
-    const cardWidth = 320 + 40; // Card width (320px) + Gap (40px)
-    if (reviewTrack) {
-        reviewTrack.style.transform = `translateX(-${currentRevIndex * cardWidth}px)`;
-    }
-}
-
-// --- MODAL & SUBMISSION ---
-const reviewModal = document.getElementById('reviewModal');
-
-function toggleReviewModal() {
-    if (reviewModal) {
-        reviewModal.classList.toggle('active');
-    }
-}
-
-const pubRevForm = document.getElementById('publicReviewForm');
-if (pubRevForm) {
-    pubRevForm.addEventListener('submit', (e) => {
+if (contactForm) {
+    contactForm.addEventListener('submit', e => {
         e.preventDefault();
+        const btn = contactForm.querySelector('.form-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Sending...';
         
-        // Get Values
-        const name = document.getElementById('r-name').value;
-        const role = document.getElementById('r-role').value;
-        const text = document.getElementById('r-msg').value;
+        const formData = new FormData(contactForm);
+        const now = new Date();
+        formData.append('Date', now.toLocaleDateString());
+        formData.append('Time', now.toLocaleTimeString());
 
-        // Create New Review Object
-        const newReview = { 
-            id: Date.now(), 
-            name: name, 
-            role: role, 
-            text: text 
-        };
-        
-        // 1. Get latest Pending list from storage (to avoid overwriting)
-        let currentPending = JSON.parse(localStorage.getItem('pendingReviews')) || [];
-        
-        // 2. Add new review to Pending
-        currentPending.push(newReview);
-        
-        // 3. Save back to LocalStorage (Admin will see this)
-        localStorage.setItem('pendingReviews', JSON.stringify(currentPending));
-
-        // 4. UI Feedback
-        toggleReviewModal();
-        pubRevForm.reset();
-        alert("Thank you! Your review has been submitted and is waiting for Admin approval.");
+        fetch(scriptURL, { method: 'POST', body: formData })
+            .then(() => {
+                btn.innerHTML = 'Success!';
+                btn.style.background = '#25D366';
+                contactForm.reset();
+                setTimeout(() => { btn.innerHTML = originalText; btn.style.background = ''; }, 3000);
+            })
+            .catch(() => { alert('Error sending message.'); btn.innerHTML = originalText; });
     });
 }
-
-// --- INITIALIZE REVIEWS ON LOAD ---
-document.addEventListener('DOMContentLoaded', () => {
-    renderReviews();
-});
-
-
-
-

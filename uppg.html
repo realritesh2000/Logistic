@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistics Reviews - Upgraded</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- BRAND COLORS --- */
+        :root {
+            --primary: #002147; /* Navy Blue */
+            --accent: #FF5733;  /* Safety Orange */
+            --bg-color: #f0f2f5; 
+            --card-bg: #ffffff;
+            --text-main: #333;
+            --text-light: #777;
+        }
+
+        /* --- GLOBAL STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            /* Visual Appeal: Subtle dotted pattern for a "Global Logistics" feel */
+            background-image: radial-gradient(#ccc 1px, transparent 1px);
+            background-size: 20px 20px;
+            padding: 40px 20px;
+        }
+
+        /* --- HEADER & SUMMARY (Content Addition) --- */
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .summary-badge {
+            display: inline-flex;
+            align-items: center;
+            background: var(--primary);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(0,33,71,0.2);
+        }
+
+        .summary-badge i { color: #FFD700; margin-right: 8px; }
+
+        /* --- FILTER BUTTONS (Interactive Feature) --- */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 25px;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,33,71,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* --- GRID LAYOUT --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* --- CARD STYLES --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.4s ease;
+            border-top: 4px solid transparent; /* Prepare for hover effect */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* Visual Appeal: Hover Effect */
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-top: 4px solid var(--accent); /* Orange line on hover */
+        }
+
+        /* Content Addition: Verified Badge */
+        .verified-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e6f4ea;
+            color: #1e8e3e;
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .service-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .rating { color: #FFD700; font-size: 0.9rem; }
+
+        .text {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .footer {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            margin-top: auto;
+        }
+
+        .footer img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info h3 {
+            font-size: 0.95rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .user-info span {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            display: block;
+        }
+        
+        .date {
+            margin-left: auto;
+            font-size: 0.7rem;
+            color: #999;
+        }
+
+        /* Animation for Filtering */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hidden { display: none; }
+
+    </style>
+</head>
+<body>
+
+    <div class="section-header">
+        <h2>Client Success Stories</h2>
+        <div class="summary-badge">
+            <i class="fas fa-star"></i> 4.9/5 Average Rating (Verified Reviews)
+        </div>
+    </div>
+
+    <div class="filter-container">
+        <button class="filter-btn active" onclick="filterReviews('all')">All Services</button>
+        <button class="filter-btn" onclick="filterReviews('shipping')">Intl. Shipping</button>
+        <button class="filter-btn" onclick="filterReviews('warehousing')">Warehousing</button>
+        <button class="filter-btn" onclick="filterReviews('freight')">Heavy Freight</button>
+    </div>
+
+    <div class="grid-container" id="reviewGrid">
+
+        <div class="card" data-category="shipping">
+            <div class="verified-badge"><i class="fas fa-check-circle"></i> Verified</div>
+            <div class="review-header">
+                <span class="service-tag">Intl. Shipping</span>
+                <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            </div>
+            <p class="text">"Fastest delivery I've ever experienced. My cargo arrived in Hamburg two days ahead of schedule. Exceptional management."</p>
+            <div class="footer">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+                <div class="user-info">
+                    <h3>Robert Fox</h3>
+                    <span>Supply Chain Mgr.</span>
+                </div>
+                <span class="date">Oct 12, 2025</span>
+            </div>
+        </div>
+
+        <div class="card" data-category="warehousing">
+            <div class="verified-badge"><i class="fas fa-check-circle"></i> Verified</div>
+            <div class="review-header">
+                <span class="service-tag">Warehousing</span>
+                <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            </div>
+            <p class="text">"The real-time inventory tracking is a game changer. We know exactly where our stock is 24/7."</p>
+            <div class="footer">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User">
+                <div class="user-info">
+                    <h3>Jenny Wilson</h3>
+                    <span>Importer</span>
+                </div>
+                <span class="date">Nov 03, 2025</span>
+            </div>
+        </div>
+
+        <div class="card" data-category="freight">
+            <div class="verified-badge"><i class="fas fa-check-circle"></i> Verified</div>
+            <div class="review-header">
+                <span class="service-tag">Heavy Freight</span>
+                <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+            </div>
+            <p class="text">"We moved our entire factory equipment using their fleet. Smooth, safe, and cost-effective."</p>
+            <div class="footer">
+                <img src="https://randomuser.me/api/portraits/men/85.jpg" alt="User">
+                <div class="user-info">
+                    <h3>Guy Hawkins</h3>
+                    <span>Logistics Director</span>
+                </div>
+                <span class="date">Sept 28, 2025</span>
+            </div>
+        </div>
+
+        <div class="card" data-category="shipping">
+            <div class="verified-badge"><i class="fas fa-check-circle"></i> Verified</div>
+            <div class="review-header">
+                <span class="service-tag">Customs Brokerage</span>
+                <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            </div>
+            <p class="text">"Their customs clearance support saved us from a huge headache. Highly recommended for international trade."</p>
+            <div class="footer">
+                <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="User">
+                <div class="user-info">
+                    <h3>Kristin Watson</h3>
+                    <span>Exporter</span>
+                </div>
+                <span class="date">Jan 15, 2026</span>
+            </div>
+        </div>
+
+        <div class="card" data-category="freight">
+            <div class="verified-badge"><i class="fas fa-check-circle"></i> Verified</div>
+            <div class="review-header">
+                <span class="service-tag">Last Mile</span>
+                <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            </div>
+            <p class="text">"Great customer service. The driver was professional and handled our fragile equipment with extreme care."</p>
+            <div class="footer">
+                <img src="https://randomuser.me/api/portraits/men/46.jpg" alt="User">
+                <div class="user-info">
+                    <h3>Cody Fisher</h3>
+                    <span>Operations Head</span>
+                </div>
+                <span class="date">Dec 10, 2025</span>
+            </div>
+        </div>
+
+         <div class="card" data-category="warehousing">
+            <div class="verified-badge"><i class="fas fa-check-circle"></i> Verified</div>
+            <div class="review-header">
+                <span class="service-tag">Distribution</span>
+                <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            </div>
+            <p class="text">"Efficient, polite, and punctual. I wouldn't trust anyone else with my high-value inventory."</p>
+            <div class="footer">
+                <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="User">
+                <div class="user-info">
+                    <h3>Darlene Robertson</h3>
+                    <span>CEO, LuxGoods</span>
+                </div>
+                <span class="date">Feb 01, 2026</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function filterReviews(category) {
+            const cards = document.querySelectorAll('.card');
+            const buttons = document.querySelectorAll('.filter-btn');
+
+            // 1. Update Buttons Styling
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.innerText.toLowerCase().includes(category) || 
+                   (category === 'all' && btn.innerText.includes('All'))) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // 2. Filter Logic
+            cards.forEach(card => {
+                // If category is 'all' OR card matches category, show it.
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.classList.remove('hidden');
+                    // Reset animation
+                    card.style.animation = 'none';
+                    card.offsetHeight; /* trigger reflow */
+                    card.style.animation = 'fadeIn 0.5s ease-in-out';
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
